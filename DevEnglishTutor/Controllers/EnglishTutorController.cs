@@ -1,41 +1,23 @@
-﻿using DevEnglishTutor.Models;
-using Microsoft.AspNetCore.Mvc;
-using System.Net.Http.Headers;
-using System.Text;
-using System.Text.Json;
+﻿using Microsoft.AspNetCore.Mvc;
+using DevEnglishTutor.Application.Interface;
 
-namespace DevEnglishTutor.Controllers
+namespace DevEnglishTutor.API.Controllers
 {
     [ApiController]
     [Route("api/english-tutor")]
     public class EnglishTutorController : ControllerBase
     {
-        private readonly HttpClient _httpClient;
-        public EnglishTutorController(HttpClient httpClient)
+        private readonly IDevEnglishTutorService _devEnglishTutorService;
+        public EnglishTutorController(IDevEnglishTutorService devEnglishTutorService)
         {
-            _httpClient = httpClient;
+            _devEnglishTutorService = devEnglishTutorService;
         }
 
         [HttpGet]
-        public async Task<IActionResult> Get(string text, [FromServices] IConfiguration configuration)
+        public async Task<IActionResult> Get(string text)
         {
-            var token = configuration.GetValue<string>("ChatGPT");
-
-            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-
-            var model = new ChatGPTInputModel(text);
-
-            var requestBody = JsonSerializer.Serialize(model);
-
-            var content = new StringContent(requestBody, Encoding.UTF8, "application/json");
-
-            var response = await _httpClient.PostAsync("https://api.openai.com/v1/completions", content);
-
-            var result = await response.Content.ReadFromJsonAsync<ChatGPTViewModel>();
-
-            var promptResponse = result?.choices?.FirstOrDefault();
-
-            return Ok(promptResponse?.text?.Replace("\n", "").Replace("\t", ""));
+            var promptResponse = await _devEnglishTutorService.PromptResponse(text);
+            return Ok(promptResponse);
         }
     }
 }

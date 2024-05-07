@@ -3,7 +3,15 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.5.33424.131
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DevEnglishTutor", "DevEnglishTutor\DevEnglishTutor.csproj", "{F930FDC8-1EE7-4C97-A3DC-65E8089208A5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DevEnglishTutor.API", "DevEnglishTutor\DevEnglishTutor.API.csproj", "{F930FDC8-1EE7-4C97-A3DC-65E8089208A5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DevEnglishTutor.Application", "DevEnglishTutor.Application\DevEnglishTutor.Application.csproj", "{7DDDCBB7-1C52-4E5A-81D0-A07E086DB220}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DevEnglishTutor.Infra", "DevEnglishTutor.Infra\DevEnglishTutor.Infra.csproj", "{9CA716D3-E174-4201-9414-F250D4B73CDA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DevEnglishTutor.Domain", "DevEnglishTutor.Domain\DevEnglishTutor.Domain.csproj", "{DA4382BA-B7E4-4DD4-9647-5EA9DA7B29C1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DevEnglishTutor.Infra.IoC", "DevEnglishTutor.Infra.IoC\DevEnglishTutor.Infra.IoC.csproj", "{4716D6C7-A4AF-4944-A167-E7307D4B237C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +23,22 @@ Global
 		{F930FDC8-1EE7-4C97-A3DC-65E8089208A5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F930FDC8-1EE7-4C97-A3DC-65E8089208A5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F930FDC8-1EE7-4C97-A3DC-65E8089208A5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7DDDCBB7-1C52-4E5A-81D0-A07E086DB220}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7DDDCBB7-1C52-4E5A-81D0-A07E086DB220}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7DDDCBB7-1C52-4E5A-81D0-A07E086DB220}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7DDDCBB7-1C52-4E5A-81D0-A07E086DB220}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9CA716D3-E174-4201-9414-F250D4B73CDA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9CA716D3-E174-4201-9414-F250D4B73CDA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9CA716D3-E174-4201-9414-F250D4B73CDA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9CA716D3-E174-4201-9414-F250D4B73CDA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DA4382BA-B7E4-4DD4-9647-5EA9DA7B29C1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DA4382BA-B7E4-4DD4-9647-5EA9DA7B29C1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DA4382BA-B7E4-4DD4-9647-5EA9DA7B29C1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DA4382BA-B7E4-4DD4-9647-5EA9DA7B29C1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4716D6C7-A4AF-4944-A167-E7307D4B237C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4716D6C7-A4AF-4944-A167-E7307D4B237C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4716D6C7-A4AF-4944-A167-E7307D4B237C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4716D6C7-A4AF-4944-A167-E7307D4B237C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
