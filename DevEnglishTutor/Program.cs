@@ -11,13 +11,15 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddInfrastructureAPI(configuration);
+builder.Services.AddInfrastructureSwagger(configuration);
 
-var app = builder.Build();
 // Configure the HTTP request pipeline.
+var app = builder.Build();
 if (true)
 {
+    app.UseDeveloperExceptionPage();
     app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "DevEnglishTutor.API v1"));
 }
 app.UseHttpsRedirection();
 app.UseAuthorization();
