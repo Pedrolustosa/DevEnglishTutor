@@ -38,7 +38,14 @@ namespace DevEnglishTutor.Application.Service
         /// <returns><![CDATA[Task<string>]]></returns>
         public async Task<string> PromptResponse(string text)
         {
-            return await _devEnglishTutorRepository.PromptResponse(text);
+            try
+            {
+                return await _devEnglishTutorRepository.PromptResponse(text);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
     }
 }

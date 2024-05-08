@@ -39,15 +39,22 @@ namespace DevEnglishTutor.Infra.Repositories
         /// <returns><![CDATA[Task<string>]]></returns>
         public async Task<string> PromptResponse(string text)
         {
-            var model = new ChatGPTInputModel(text);
-            var requestBody = JsonSerializer.Serialize(model);
-            var content = new StringContent(requestBody, Encoding.UTF8, "application/json");
-            var token = _configuration.GetSection("ChatGPT:Token").Value;
-            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-            var response = await _httpClient.PostAsync("https://api.openai.com/v1/completions", content);
-            var result = await response.Content.ReadAsStringAsync();
-            var promptResponse = result;
-            return promptResponse?.ToString() ?? string.Empty;
+            try
+            {
+                var model = new ChatGPTInputModel(text);
+                var requestBody = JsonSerializer.Serialize(model);
+                var content = new StringContent(requestBody, Encoding.UTF8, "application/json");
+                var token = _configuration.GetSection("ChatGPT:Token").Value;
+                _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+                var response = await _httpClient.PostAsync("https://api.openai.com/v1/completions", content);
+                var result = await response.Content.ReadAsStringAsync();
+                var promptResponse = result;
+                return promptResponse?.ToString() ?? string.Empty;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
     }
 }

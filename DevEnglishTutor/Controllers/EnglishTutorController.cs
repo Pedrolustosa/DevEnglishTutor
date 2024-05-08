@@ -31,8 +31,16 @@ namespace DevEnglishTutor.API.Controllers
         [HttpGet]
         public async Task<IActionResult> Get(string text)
         {
-            var promptResponse = await _devEnglishTutorService.PromptResponse(text);
-            return Ok(promptResponse);
+            try
+            {
+                var promptResponse = await _devEnglishTutorService.PromptResponse(text);
+                return Ok(promptResponse);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+            
         }
     }
 }
