@@ -20,6 +20,8 @@ namespace DevEnglishTutor.Infra.IoC
         /// <returns>An IServiceCollection</returns>
         public static IServiceCollection AddInfrastructureAPI(this IServiceCollection services, IConfiguration configuration)
         {
+            services.AddHttpClient();
+
             //Repositories
             services.AddScoped<IDevEnglishTutorRepository, DevEnglishTutorRepository>();
 

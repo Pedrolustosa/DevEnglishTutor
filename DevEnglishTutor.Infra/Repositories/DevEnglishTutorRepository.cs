@@ -1,9 +1,9 @@
 ﻿using System.Text;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using DevEnglishTutor.Models;
 using DevEnglishTutor.Domain.Interface;
 using Microsoft.Extensions.Configuration;
+using System.Net.Http;
+using System.Text.Json;
 
 namespace DevEnglishTutor.Infra.Repositories
 {
@@ -24,15 +24,11 @@ namespace DevEnglishTutor.Infra.Repositories
         /// The content.
         /// </summary>
         private const string Content = "content";
-        /// <summary>
-        /// Open API.
-        /// </summary>
-        private const string OpenAPI = "https://api.openai.com/v1/chat/completions";
 
         /// <summary>
         /// The http client.
         /// </summary>
-        private readonly HttpClient _httpClient;
+        private readonly IHttpClientFactory _httpClientFactory;
 
         /// <summary>
         /// The configuration.
@@ -44,9 +40,9 @@ namespace DevEnglishTutor.Infra.Repositories
         /// </summary>
         /// <param name="httpClient">The http client.</param>
         /// <param name="configuration">The configuration.</param>
-        public DevEnglishTutorRepository(HttpClient httpClient, IConfiguration configuration)
+        public DevEnglishTutorRepository(IHttpClientFactory httpClientFactory, IConfiguration configuration)
         {
-            _httpClient = httpClient;
+            _httpClientFactory = httpClientFactory;
             _configuration = configuration;
         }
 
@@ -59,21 +55,28 @@ namespace DevEnglishTutor.Infra.Repositories
         {
             try
             {
-                var token = _configuration.GetSection("ChatGPT:Token").Value;
-                _httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {token}");
-                var systemPrompt = new Prompt("system", "You are the best foreign language translator.");
-                var userPrompt = new Prompt("user", $"Correct this English phrase: {text}");
-                var model = new ConversationModel
+                var httpClient = _httpClientFactory.CreateClient("ChtpGPT");
+
+                ChatCompletionRequest completionRequest = new()
                 {
-                    Model = "gpt-3.5-turbo-0125",
-                    Prompt = new[] { systemPrompt, userPrompt }
+                    Model = "gpt-3.5-turbo",
+                    MaxTokens = 1000,
+                    Messages = [new Message() { Role = "user", Content = text }]
                 };
-                var content = new StringContent(JsonConvert.SerializeObject(model), Encoding.UTF8, "application/json");
-                var response = await _httpClient.PostAsync(OpenAPI, content);
-                var result = await response.Content.ReadAsStringAsync();
-                var responseObject = JObject.Parse(result);
-                string? assistantMessage = responseObject?[Choices]?[0]?[Message]?[Content]?.ToString();
-                return $"ChatGPT: {assistantMessage}";
+
+
+                using var httpReq = new HttpRequestMessage(HttpMethod.Post, "https://api.openai.com/v1/chat/completions");
+                httpReq.Headers.Add("Authorization", $"Bearer {_configuration["ChatGPT:Token"]}");
+
+                string requestString = JsonSerializer.Serialize(completionRequest);
+                httpReq.Content = new StringContent(requestString, Encoding.UTF8, "application/json");
+
+                using HttpResponseMessage? httpResponse = await httpClient.SendAsync(httpReq);
+                httpResponse.EnsureSuccessStatusCode();
+
+                var completionResponse = httpResponse.IsSuccessStatusCode ? JsonSerializer.Deserialize<ChatCompletionResponse>(await httpResponse.Content.ReadAsStringAsync()) : null;
+
+                return completionResponse.Choices?[0]?.Message?.Content;
             }
             catch (Exception)
             {
