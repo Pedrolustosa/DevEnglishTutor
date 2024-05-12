@@ -29,18 +29,18 @@ namespace DevEnglishTutor.API.Controllers
         /// <param name="text">The text.</param>
         /// <returns><![CDATA[Task<IActionResult>]]></returns>
         [HttpGet]
-        public async Task<IActionResult> Get(string text)
+        [Route("GetGrammarCorrection")]
+        public async Task<IActionResult> GetGrammarCorrection(string text)
         {
             try
             {
-                var promptResponse = await _devEnglishTutorService.PromptResponse(text);
+                var promptResponse = await _devEnglishTutorService.GetGrammarCorrection(text);
                 return Ok(promptResponse);
             }
             catch (Exception)
             {
                 throw;
             }
-            
         }
     }
 }

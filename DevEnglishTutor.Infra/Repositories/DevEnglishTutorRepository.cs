@@ -1,7 +1,7 @@
 ﻿using System.Text;
-using System.Text.Json;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using DevEnglishTutor.Models;
-using System.Net.Http.Headers;
 using DevEnglishTutor.Domain.Interface;
 using Microsoft.Extensions.Configuration;
 
@@ -12,6 +12,23 @@ namespace DevEnglishTutor.Infra.Repositories
     /// </summary>
     public class DevEnglishTutorRepository : IDevEnglishTutorRepository
     {
+        /// <summary>
+        /// The choices.
+        /// </summary>
+        private const string Choices = "choices";
+        /// <summary>
+        /// The message.
+        /// </summary>
+        private const string Message = "message";
+        /// <summary>
+        /// The content.
+        /// </summary>
+        private const string Content = "content";
+        /// <summary>
+        /// Open API.
+        /// </summary>
+        private const string OpenAPI = "https://api.openai.com/v1/chat/completions";
+
         /// <summary>
         /// The http client.
         /// </summary>
@@ -26,6 +43,7 @@ namespace DevEnglishTutor.Infra.Repositories
         /// Initializes a new instance of the <see cref="DevEnglishTutorRepository"/> class.
         /// </summary>
         /// <param name="httpClient">The http client.</param>
+        /// <param name="configuration">The configuration.</param>
         public DevEnglishTutorRepository(HttpClient httpClient, IConfiguration configuration)
         {
             _httpClient = httpClient;
@@ -37,19 +55,25 @@ namespace DevEnglishTutor.Infra.Repositories
         /// </summary>
         /// <param name="text">The text.</param>
         /// <returns><![CDATA[Task<string>]]></returns>
-        public async Task<string> PromptResponse(string text)
+        public async Task<string> GetGrammarCorrection(string text)
         {
             try
             {
-                var model = new ChatGPTInputModel(text);
-                var requestBody = JsonSerializer.Serialize(model);
-                var content = new StringContent(requestBody, Encoding.UTF8, "application/json");
                 var token = _configuration.GetSection("ChatGPT:Token").Value;
-                _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-                var response = await _httpClient.PostAsync("https://api.openai.com/v1/completions", content);
+                _httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {token}");
+                var systemPrompt = new Prompt("system", "You are the best foreign language translator.");
+                var userPrompt = new Prompt("user", $"Correct this English phrase: {text}");
+                var model = new ConversationModel
+                {
+                    Model = "gpt-3.5-turbo-0125",
+                    Prompt = new[] { systemPrompt, userPrompt }
+                };
+                var content = new StringContent(JsonConvert.SerializeObject(model), Encoding.UTF8, "application/json");
+                var response = await _httpClient.PostAsync(OpenAPI, content);
                 var result = await response.Content.ReadAsStringAsync();
-                var promptResponse = result;
-                return promptResponse?.ToString() ?? string.Empty;
+                var responseObject = JObject.Parse(result);
+                string? assistantMessage = responseObject?[Choices]?[0]?[Message]?[Content]?.ToString();
+                return $"ChatGPT: {assistantMessage}";
             }
             catch (Exception)
             {

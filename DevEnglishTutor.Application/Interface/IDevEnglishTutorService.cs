@@ -10,6 +10,6 @@
         /// </summary>
         /// <param name="text">The text.</param>
         /// <returns><![CDATA[Task<string>]]></returns>
-        Task<string> PromptResponse(string text);
+        Task<string> GetGrammarCorrection(string text);
     }
 }

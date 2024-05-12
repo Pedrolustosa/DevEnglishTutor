@@ -36,11 +36,11 @@ namespace DevEnglishTutor.Application.Service
         /// </summary>
         /// <param name="text">The text.</param>
         /// <returns><![CDATA[Task<string>]]></returns>
-        public async Task<string> PromptResponse(string text)
+        public async Task<string> GetGrammarCorrection(string text)
         {
             try
             {
-                return await _devEnglishTutorRepository.PromptResponse(text);
+                return await _devEnglishTutorRepository.GetGrammarCorrection(text);
             }
             catch (Exception)
             {
