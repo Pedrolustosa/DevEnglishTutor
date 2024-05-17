@@ -1,5 +1,4 @@
 ﻿using DevEnglishTutor.Domain.Interface;
-using Microsoft.Extensions.Configuration;
 using DevEnglishTutor.Application.Interface;
 
 namespace DevEnglishTutor.Application.Service
@@ -7,32 +6,16 @@ namespace DevEnglishTutor.Application.Service
     /// <summary>
     /// The dev english tutor service.
     /// </summary>
-    public class DevEnglishTutorService : IDevEnglishTutorService
+    /// <param name="devEnglishTutorRepository">The dev english tutor repository.</param>
+    public class DevEnglishTutorService(IDevEnglishTutorRepository devEnglishTutorRepository) : IDevEnglishTutorService
     {
-        /// <summary>
-        /// The configuration.
-        /// </summary>
-        public readonly IConfiguration _configuration;
-
         /// <summary>
         /// The dev english tutor repository.
         /// </summary>
-        public readonly IDevEnglishTutorRepository _devEnglishTutorRepository;
+        private readonly IDevEnglishTutorRepository _devEnglishTutorRepository = devEnglishTutorRepository;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="DevEnglishTutorService"/> class.
-        /// </summary>
-        /// <param name="httpClient">The http client.</param>
-        /// <param name="devEnglishTutorRepository">The dev english tutor repository.</param>
-        public DevEnglishTutorService(IDevEnglishTutorRepository devEnglishTutorRepository, 
-                                      IConfiguration configuration)
-        {
-            _configuration = configuration;
-            _devEnglishTutorRepository = devEnglishTutorRepository;
-        }
-
-        /// <summary>
-        /// Prompts the response.
+        /// Get grammar correction.
         /// </summary>
         /// <param name="text">The text.</param>
         /// <returns><![CDATA[Task<string>]]></returns>

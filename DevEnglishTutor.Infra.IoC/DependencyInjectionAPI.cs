@@ -17,9 +17,12 @@ namespace DevEnglishTutor.Infra.IoC
         /// </summary>
         /// <param name="services">The services.</param>
         /// <param name="configuration">The configuration.</param>
+        /// <exception cref="ArgumentNullException"></exception>
         /// <returns>An IServiceCollection</returns>
         public static IServiceCollection AddInfrastructureAPI(this IServiceCollection services, IConfiguration configuration)
         {
+            ArgumentNullException.ThrowIfNull(configuration);
+
             services.AddHttpClient();
 
             //Repositories

@@ -6,31 +6,24 @@ namespace DevEnglishTutor.API.Controllers
     /// <summary>
     /// The english tutor controller.
     /// </summary>
+    /// <param name="devEnglishTutorService">The dev english tutor service.</param>
     [ApiController]
     [Route("api/english-tutor")]
-    public class EnglishTutorController : ControllerBase
+    public class EnglishTutorController(IDevEnglishTutorService devEnglishTutorService) : ControllerBase
     {
         /// <summary>
         /// The dev english tutor service.
         /// </summary>
-        private readonly IDevEnglishTutorService _devEnglishTutorService;
-        /// <summary>
-        /// Initializes a new instance of the <see cref="EnglishTutorController"/> class.
-        /// </summary>
-        /// <param name="devEnglishTutorService">The dev english tutor service.</param>
-        public EnglishTutorController(IDevEnglishTutorService devEnglishTutorService)
-        {
-            _devEnglishTutorService = devEnglishTutorService;
-        }
+        private readonly IDevEnglishTutorService _devEnglishTutorService = devEnglishTutorService;
 
         /// <summary>
-        /// Get and return a task of type iactionresult.
+        /// Get grammar correction.
         /// </summary>
         /// <param name="text">The text.</param>
         /// <returns><![CDATA[Task<IActionResult>]]></returns>
         [HttpGet]
         [Route("GetGrammarCorrection")]
-        public async Task<IActionResult> GetGrammarCorrection(string text)
+        public async Task<IActionResult> GetGrammarCorrection([FromQuery(Name = "text")] string text)
         {
             try
             {

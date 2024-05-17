@@ -1,53 +1,23 @@
-﻿using System.Text;
-using DevEnglishTutor.Models;
+﻿using OpenAI_API;
+using OpenAI_API.Models;
+using OpenAI_API.Completions;
 using DevEnglishTutor.Domain.Interface;
-using Microsoft.Extensions.Configuration;
-using System.Net.Http;
-using System.Text.Json;
 
 namespace DevEnglishTutor.Infra.Repositories
 {
     /// <summary>
     /// The dev english tutor repository.
     /// </summary>
-    public class DevEnglishTutorRepository : IDevEnglishTutorRepository
+    /// <param name="openAIAPI">The open AIAPI.</param>
+    public class DevEnglishTutorRepository(OpenAIAPI openAIAPI) : IDevEnglishTutorRepository
     {
         /// <summary>
-        /// The choices.
+        /// Open AIAPI.
         /// </summary>
-        private const string Choices = "choices";
-        /// <summary>
-        /// The message.
-        /// </summary>
-        private const string Message = "message";
-        /// <summary>
-        /// The content.
-        /// </summary>
-        private const string Content = "content";
+        private readonly OpenAIAPI _openAIAPI = openAIAPI;
 
         /// <summary>
-        /// The http client.
-        /// </summary>
-        private readonly IHttpClientFactory _httpClientFactory;
-
-        /// <summary>
-        /// The configuration.
-        /// </summary>
-        public readonly IConfiguration _configuration;
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="DevEnglishTutorRepository"/> class.
-        /// </summary>
-        /// <param name="httpClient">The http client.</param>
-        /// <param name="configuration">The configuration.</param>
-        public DevEnglishTutorRepository(IHttpClientFactory httpClientFactory, IConfiguration configuration)
-        {
-            _httpClientFactory = httpClientFactory;
-            _configuration = configuration;
-        }
-
-        /// <summary>
-        /// Prompts the response.
+        /// Get grammar correction.
         /// </summary>
         /// <param name="text">The text.</param>
         /// <returns><![CDATA[Task<string>]]></returns>
@@ -55,28 +25,11 @@ namespace DevEnglishTutor.Infra.Repositories
         {
             try
             {
-                var httpClient = _httpClientFactory.CreateClient("ChtpGPT");
-
-                ChatCompletionRequest completionRequest = new()
-                {
-                    Model = "gpt-3.5-turbo",
-                    MaxTokens = 1000,
-                    Messages = [new Message() { Role = "user", Content = text }]
-                };
-
-
-                using var httpReq = new HttpRequestMessage(HttpMethod.Post, "https://api.openai.com/v1/chat/completions");
-                httpReq.Headers.Add("Authorization", $"Bearer {_configuration["ChatGPT:Token"]}");
-
-                string requestString = JsonSerializer.Serialize(completionRequest);
-                httpReq.Content = new StringContent(requestString, Encoding.UTF8, "application/json");
-
-                using HttpResponseMessage? httpResponse = await httpClient.SendAsync(httpReq);
-                httpResponse.EnsureSuccessStatusCode();
-
-                var completionResponse = httpResponse.IsSuccessStatusCode ? JsonSerializer.Deserialize<ChatCompletionResponse>(await httpResponse.Content.ReadAsStringAsync()) : null;
-
-                return completionResponse.Choices?[0]?.Message?.Content;
+                var response = string.Empty;
+                var completion = new CompletionRequest { Prompt = text, Model = Model.ChatGPTTurbo, MaxTokens = 200 };
+                var result = await _openAIAPI.Completions.CreateCompletionAsync(completion);
+                result.Completions.ForEach(resultText => response = resultText.Text);
+                return response;
             }
             catch (Exception)
             {
